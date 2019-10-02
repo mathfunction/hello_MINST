@@ -1,4 +1,4 @@
-# Hello DL / MINST / CNN / Pytorch / OpenVINO
+# Hello DL / MINST / CNN / Pytorch / OpenVINO / Python Code 
 
 
 
@@ -12,7 +12,7 @@ http://yann.lecun.com/exdb/mnist/  (已下載至 ./data)
 
 
 
-## minst_pytorch.py 
+## minst_pytorch.py:
 
 ### Python 程式區塊
 
@@ -58,7 +58,15 @@ python minst_pytorch.py --inference-CPU
 
 --------------
 
+#### OpenVINO 安裝連結
 
+- Windows:
+
+​	<https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_windows.html>
+
+- Linux/Mac:
+
+  <https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux.html>
 
 #### OpenVINO 激活環境指令 
 
