@@ -17,7 +17,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.utils.data as Data
-import idx2numpy
 import matplotlib.pyplot as plt
 import subprocess
 
@@ -28,6 +27,7 @@ ABSPATH = os.path.dirname(os.path.abspath(__file__))
 #=============================================================================================================================================
 class ReadMINST:
 	def __init__(self):
+		import idx2numpy
 		self.xtrain = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/train-images.idx3-ubyte")).type(torch.FloatTensor)
 		self.ytrain = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/train-labels.idx1-ubyte")).type(torch.LongTensor)
 		self.xtest = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/t10k-images.idx3-ubyte")).type(torch.FloatTensor)
@@ -231,10 +231,10 @@ class InferenceEngine:
 
 
 """============================================================================
-	需要安裝　intel-openVINO , 
+	需要安裝　intel-openVINO : 
 	Python API 教學:
 		https://www.youtube.com/watch?v=6Dzvamu3mg8&list=PLDKCjIU5YH6jMzcTV5_cxX9aPHsborbXQ&index=17 
-	激活函數 :
+	激活 :
 		"C:/Program Files (x86)/IntelSWTools/openvino/bin/setupvars.bat"
 
 ================================================================================"""
@@ -298,15 +298,19 @@ class InferenceEngineOpenVINO:
 
 
 
-#=============================================================================================================================================
-# script 指令
-#============================================================================================================================================
+
 def ModelOptimizerOpenVINO():
 	if os.name == "nt":
 		os.chdir("C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\model_optimizer")
 	else:
 		os.chdir("/opt/intel/openvino/deployment_tools/model_optimizer")
-	subprocess.run(["python","mo.py","--input_model",ABSPATH+"/model/SimpleCNN_Batch1.onnx","--output_dir",ABSPATH+"/model/","--data_type","FP32"])
+	#=============================================================================================================================================
+	# script 指令
+	#============================================================================================================================================
+	try:
+		subprocess.run(["python3","mo.py","--input_model",ABSPATH+"/model/SimpleCNN_Batch1.onnx","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
+	except FileNotFoundError:
+		subprocess.run(["python","mo.py","--input_model",ABSPATH+"/model/SimpleCNN_Batch1.onnx","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
 	os.chdir(ABSPATH)
 
 

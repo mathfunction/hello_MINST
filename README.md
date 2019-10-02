@@ -1,4 +1,4 @@
-# Hello DL / MINST /CNN / Pytorch / OpenVINO
+# Hello DL / MINST / CNN / Pytorch / OpenVINO
 
 
 
