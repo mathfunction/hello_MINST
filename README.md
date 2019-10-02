@@ -12,7 +12,7 @@ http://yann.lecun.com/exdb/mnist/
 
 
 
-## minst_pytorch_XXX.py 
+## minst_pytorch.py 
 
 
 
@@ -27,17 +27,17 @@ http://yann.lecun.com/exdb/mnist/
 
 
 
-#### CPU+Python 訓練:
+#### Python : CPU/GPU訓練 + CPU 推論:
 
 ```bash
-python minst_pytorch_cpu.py --training
+python minst_pytorch.py --training-CPU
+python minst_pytorch.py --training-GPU
+python minst_pytorch.py --inference
 ```
 
-#### CPU+Python 推論:
+#### 
 
-```bash
-python minst_pytorch_cpu.py --inference
-```
+
 
 
 

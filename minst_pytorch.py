@@ -1,6 +1,6 @@
 """
 
-	This is Pytorch MINST run on CPU code
+	This is Pytorch MINST run on CPU/GPU code
 
 	Download MINST from :  http://yann.lecun.com/exdb/mnist/
 	
@@ -40,10 +40,10 @@ class ReadMINST:
 	# 把資料印出來看 
 	def look(self,idx=0,_boolTrain=True):
 		if _boolTrain == True:
-			print("這是_訓練資料_第 {} 個樣本 , Label = {}".format(idx+1,self.ytrain[idx].item()))
+			print("這是_訓練資料_第 {} 個樣本 , Label = {} [關閉視窗後會繼續]".format(idx+1,self.ytrain[idx].item()))
 			mat = self.xtrain[idx]
 		else:
-			print("這是_測試資料_第 {} 個樣本 , Label = {}".format(idx+1,self.ytest[idx].item()))
+			print("這是_測試資料_第 {} 個樣本 , Label = {} [關閉視窗後會繼續]".format(idx+1,self.ytest[idx].item()))
 			mat = self.xtest[idx]
 		plt.matshow(mat,cmap=plt.get_cmap('gray'))
 		plt.show()
@@ -93,13 +93,14 @@ class SimpleCNN(nn.Module):
 #==================================================================================================================================
 
 class TrainingEngine:
-	def __init__(self):
+	def __init__(self,_boolGPU=False):
+		self._boolGPU = _boolGPU
 		self.model = SimpleCNN()
 		# 選擇 loss_func
 		self.loss_func = torch.nn.CrossEntropyLoss()  
 	# y_target in {0,1,2,3,4,....9}
 	def score_func(self,y_pred,y_target):
-		# since output is one-hot representation , we need to use torch.argmax((batch x 10),dim=1) ---> ( batch  )
+		# 利用 torch.argmax((batch x 10),dim=1) ---> ( batch  ) 把 one-hot 轉成 位址整數 
 		y_pred_int = torch.argmax(y_pred,dim=1)
 		# accuracy
 		_count = 0 
@@ -110,10 +111,19 @@ class TrainingEngine:
 	#==============================================================================================================#
 
 	#==============================================================================================================#
-	def run(self,nepochs=5,batch_size=30,lr=0.005,modelpath=ABSPATH+"\\model\\"+"SimpleCNN.pkl"):
+	def run(self,nepochs=10,batch_size=30,lr=0.005,modelpath=ABSPATH+"\\model\\"+"SimpleCNN.pkl"):
 		data = ReadMINST()
 		n_train = data.xtrain.size(0)
 		n_valid = data.xtest.size(0)
+		xtest = data.xtest
+		ytest = data.ytest
+		#############################################
+		# GPU
+		if self._boolGPU == True: 
+			self.model.cuda()
+			xtest = xtest.cuda()
+			ytest = ytest.cuda()
+		#############################################
 		data.look(torch.randint(0,n_train,(1,)).item())
 		#===========================================================================#
 		# 把訓練資料切割成一個個 batchsize : (n,f) ---> (n/b,b, f) 
@@ -140,6 +150,12 @@ class TrainingEngine:
 			train_count = 0.0
 			# batch-size training 
 			for step,(x,y_target) in enumerate(loader):
+				###################################
+				# GPU
+				if self._boolGPU == True:
+					x = x.cuda()
+					y_target = y_target.cuda()
+				##################################
 				self.optimizer.zero_grad()
 				y_pred = self.model(x)
 				loss = self.loss_func(y_pred,y_target)
@@ -152,8 +168,8 @@ class TrainingEngine:
 			self.model.eval()  # 凍結權重
 			train_loss/= n_train
 			train_acc = train_count/n_train
-			valid_loss = self.loss_func(self.model(data.xtest),data.ytest).item()
-			valid_count = self.score_func(self.model(data.xtest),data.ytest)
+			valid_loss = self.loss_func(self.model(xtest),ytest).item()
+			valid_count = self.score_func(self.model(xtest),ytest)
 			valid_loss/= n_valid
 			valid_acc = valid_count/n_valid
 			print("epoch:{} | train_loss:{} | valid_loss:{} | train_acc:{} | valid_acc:{}".format(epoch+1,train_loss,valid_loss,train_acc,valid_acc))
@@ -205,13 +221,16 @@ class InferenceEngine:
 
 if __name__ == "__main__":
 	if len(sys.argv) == 2:
-		if sys.argv[1] == "--training":
-			TrainingEngine().run() 	# 訓練端
+		if sys.argv[1] == "--training-CPU":
+			TrainingEngine(False).run() # 訓練端
+		if sys.argv[1] == "--training-GPU":
+			TrainingEngine(True).run() # 訓練端
 		if sys.argv[1] == "--inference":
 			InferenceEngine().run() # 推論端
 	else:
 		print("===============================")
-		print("--training")
+		print("--training-CPU")
+		print("--training-GPU")
 		print("--inference")
 		print("===============================")
 
