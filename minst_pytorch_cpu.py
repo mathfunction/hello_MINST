@@ -208,7 +208,7 @@ if __name__ == "__main__":
 		if sys.argv[1] == "--training":
 			TrainingEngine().run() 	# 訓練端
 		if sys.argv[1] == "--inference":
-			InferenceEngine().run() # 執行端
+			InferenceEngine().run() # 推論端
 	else:
 		print("===============================")
 		print("--training")
