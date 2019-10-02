@@ -20,7 +20,7 @@ import torch.utils.data as Data
 import idx2numpy
 import matplotlib.pyplot as plt
 
-
+# 取得該檔案絕對路徑
 ABSPATH = os.path.dirname(os.path.abspath(__file__))
 #=============================================================================================================================================
 # 讀檔 class ，特殊檔案 : API 轉成 numpy 轉 torch.tensor : 決定 x,y 的長相
@@ -111,7 +111,7 @@ class TrainingEngine:
 	#==============================================================================================================#
 
 	#==============================================================================================================#
-	def run(self,nepochs=10,batch_size=30,lr=0.005,modelpath=ABSPATH+"\\model\\"+"SimpleCNN.pkl"):
+	def run(self,nepochs=10,batch_size=30,lr=0.005,modelpath=ABSPATH+"/model/"+"SimpleCNN.pkl"):
 		data = ReadMINST()
 		n_train = data.xtrain.size(0)
 		n_valid = data.xtest.size(0)
@@ -184,7 +184,8 @@ class TrainingEngine:
 
 
 class InferenceEngine:
-	def __init__(self,modelpath=ABSPATH+"\\model\\"+"SimpleCNN.pkl"):
+	def __init__(self,modelpath=ABSPATH+"/model/"+"SimpleCNN.pkl"):
+		self.modelpath = modelpath
 		self.model = SimpleCNN()
 		print("===========================================")
 		print("Load {}".format(modelpath))
@@ -214,26 +215,51 @@ class InferenceEngine:
 			print("預測結果:{} , 正確結果:{} \t".format(torch.argmax(self.infer(x.view(1,x.size(0),x.size(1))),dim=1).item(),y),end="")
 			data.look(r2,False)
 			_str = input("任何鍵重測 , CTRL+C 可終止程式 !!")
+	# 教學 https://michhar.github.io/convert-pytorch-onnx/
+	def to_onnx(self,batch_size=1):
+		filename = "{}_Batch{}.onnx".format(self.modelpath.split(".")[0],batch_size)
+		# 只是確認 model input 形狀 batch_size x 28 x 28 
+		dummy_input = torch.randn(batch_size,28,28) 
+		torch.onnx.export(self.model,dummy_input,filename)
+		print("create {} !!".format(filename))
 			
 				
 
 #=============================================================================================================================================
 
-if __name__ == "__main__":
-	if len(sys.argv) == 2:
-		if sys.argv[1] == "--training-CPU":
-			TrainingEngine(False).run() # 訓練端
-		if sys.argv[1] == "--training-GPU":
-			TrainingEngine(True).run() # 訓練端
-		if sys.argv[1] == "--inference":
-			InferenceEngine().run() # 推論端
-	else:
-		print("===============================")
-		print("--training-CPU")
-		print("--training-GPU")
-		print("--inference")
-		print("===============================")
+def command():
+	print("==================================================================")
+	print("python minst_pytorch.py --training-CPU [epochs] [batch_size] [lr]")
+	print("python minst_pytorch.py --training-GPU [epochs] [batch_size] [lr]")
+	print("python minst_pytorch.py --inference-CPU")
+	print("python minst_pytorch.py --pkl2onnx [batch_size]")
+	print("==================================================================")
 
+
+
+if __name__ == "__main__":
+	if len(sys.argv) == 5:
+		epochs = int(sys.argv[2])
+		batch_size = int(sys.argv[3])
+		lr = float(sys.argv[4])
+		if sys.argv[1] == "--training-CPU":
+			TrainingEngine(False).run(epochs,batch_size,lr) # 訓練端
+		elif sys.argv[1] == "--training-GPU":
+			TrainingEngine(True).run(epochs,batch_size,lr) # 訓練端
+		else:
+			command()
+	elif len(sys.argv) == 2:
+		if sys.argv[1] == "--inference-CPU":
+			InferenceEngine().run() # 推論端
+		else:
+			command()
+	elif len(sys.argv) == 3: 
+		if sys.argv[1] == "--pkl2onnx":
+			InferenceEngine().to_onnx(int(sys.argv[2]))
+		else:
+			command()
+	else:
+		command()
 
 	
 	

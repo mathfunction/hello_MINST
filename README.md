@@ -25,17 +25,18 @@ http://yann.lecun.com/exdb/mnist/  (已下載至 ./data)
 -  numpy
 - matplotlib
 
-
-
-#### Python : CPU/GPU訓練 + CPU 推論:
+#### 命令列 : CPU/GPU訓練 , CPU 推論 , pkl 轉 onnx:
 
 ```bash
-python minst_pytorch.py --training-CPU
-python minst_pytorch.py --training-GPU
-python minst_pytorch.py --inference
+python minst_pytorch.py --training-CPU [epochs] [batch_size] [lr]
+python minst_pytorch.py --training-GPU [epochs] [batch_size] [lr]
+python minst_pytorch.py --inference-CPU
+python minst_pytorch.py --pkl2onnx [batch_size]
 ```
 
-#### 
+其中:  [epochs]  整數(ex:50)，[batch_size] 整數(ex:30)，[lr] 0~1的實數 (ex:0.002)
+
+ 
 
 
 
