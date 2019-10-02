@@ -1,14 +1,14 @@
-# Hello Deep-Learning  MINST 範例
+# Hello Deep-Learning , MINST+CNN 範例
 
 
 
 ## MINST Data載點:  
 
-http://yann.lecun.com/exdb/mnist/
+http://yann.lecun.com/exdb/mnist/  (已下載至 ./data)
 
 ## 論文連結:   
 
-<http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf>
+<http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf>  (古老經典文獻)
 
 
 
@@ -20,7 +20,7 @@ http://yann.lecun.com/exdb/mnist/
 
 -  torch  (需要 1.X.X 版才不會有 bug )
 
--  idx2numpy  (讀取 idx3-ubyte )
+-  idx2numpy  (讀取 .idx1-ubtye, .idx3-ubyte )
 
 -  numpy
 - matplotlib
