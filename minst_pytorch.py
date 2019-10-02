@@ -19,6 +19,7 @@ import torch.nn as nn
 import torch.utils.data as Data
 import idx2numpy
 import matplotlib.pyplot as plt
+import subprocess
 
 # 取得該檔案絕對路徑
 ABSPATH = os.path.dirname(os.path.abspath(__file__))
@@ -111,7 +112,10 @@ class TrainingEngine:
 	#==============================================================================================================#
 
 	#==============================================================================================================#
-	def run(self,nepochs=10,batch_size=30,lr=0.005,modelpath=ABSPATH+"/model/"+"SimpleCNN.pkl"):
+	def run(self,nepochs=10,batch_size=30,lr=0.005,_boolContinue=0,modelpath=ABSPATH+"/model/"+"SimpleCNN.pkl"):
+		if _boolContinue == 1:
+			self.model.load_state_dict(torch.load(modelpath))
+			print("Load Model from {}".format(modelpath))
 		data = ReadMINST()
 		n_train = data.xtrain.size(0)
 		n_valid = data.xtest.size(0)
@@ -223,34 +227,124 @@ class InferenceEngine:
 		torch.onnx.export(self.model,dummy_input,filename)
 		print("create {} !!".format(filename))
 			
-				
+
+
+
+"""============================================================================
+	需要安裝　intel-openVINO , 
+	Python API 教學:
+		https://www.youtube.com/watch?v=6Dzvamu3mg8&list=PLDKCjIU5YH6jMzcTV5_cxX9aPHsborbXQ&index=17 
+	激活函數 :
+		"C:/Program Files (x86)/IntelSWTools/openvino/bin/setupvars.bat"
+
+================================================================================"""
+class InferenceEngineOpenVINO:
+	def __init__(self,batch_size=1):
+		from openvino.inference_engine import IENetwork, IEPlugin 
+		xmlfile = ABSPATH + "/model/SimpleCNN_Batch{}.xml".format(batch_size)
+		binfile = ABSPATH + "/model/SimpleCNN_Batch{}.bin".format(batch_size)
+		self.net = IENetwork(model=xmlfile, weights=binfile)
+		
+		self.plugin = IEPlugin(device="CPU")
+		#self.plugin = IEPlugin(device="GPU")  if you have intel GPU not nvidia  
+		self.exec_net = self.plugin.load(network=self.net)
+		self.input_blob = next(iter(self.net.inputs))
+		self.output_blob = next(iter(self.net.outputs))
+
+		print("========================================================")
+		print("Load Network Topology : {}".format(xmlfile))
+		print("Load Network Weight : {}".format(binfile))
+		print("Input_Shape: {}".format(self.net.inputs[self.input_blob].shape))
+		print("Output_Shape: {}".format(self.net.outputs[self.output_blob].shape))
+		print("========================================================")
+
+	#========================================================================#
+	"""
+	# note : 
+			x = (1,28,28) float numpy array
+			self.exec_net.infer(inputs={self.input_blob:x})[self.output_blob] => (1,10) numpy array 
+	 		np.argmax(,axis=1) => (1,1) array
+	"""
+	def infer(self,x):
+		return np.argmax(self.exec_net.infer(inputs={self.input_blob:x})[self.output_blob],axis=1)[0]
+		
+	def run(self):
+		data = ReadMINST()
+		n_train = data.xtrain.size(0)
+		n_valid = data.xtest.size(0)
+
+		while 1:
+			#=============================================================
+			r1 = torch.randint(0,n_train,(1,)).item()
+			# 從 train 挑
+			x = data.xtrain[r1].numpy()
+			x = x.reshape(1,28,28)
+			y = data.ytrain[r1].item()
+			print("預測結果:{} , 正確結果:{} \t".format(self.infer(x),y),end="")
+			
+			
+			data.look(r1)
+			#============================================================
+			# 從 test 挑
+			r2 = torch.randint(0,n_valid,(1,)).item()
+			x = data.xtest[r2].numpy()
+			x = x.reshape(1,28,28)
+			y = data.ytest[r2].item()
+			print("預測結果:{} , 正確結果:{} \t".format(self.infer(x),y),end="")
+			
+			
+			data.look(r2,False)
+			_str = input("任何鍵重測 , CTRL+C 可終止程式 !!")
+
+
 
 #=============================================================================================================================================
+# script 指令
+#============================================================================================================================================
+def ModelOptimizerOpenVINO():
+	if os.name == "nt":
+		os.chdir("C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\model_optimizer")
+	else:
+		os.chdir("/opt/intel/openvino/deployment_tools/model_optimizer")
+	subprocess.run(["python","mo.py","--input_model",ABSPATH+"/model/SimpleCNN_Batch1.onnx","--output_dir",ABSPATH+"/model/","--data_type","FP32"])
+	os.chdir(ABSPATH)
+
+
+
+
 
 def command():
 	print("==================================================================")
-	print("python minst_pytorch.py --training-CPU [epochs] [batch_size] [lr]")
-	print("python minst_pytorch.py --training-GPU [epochs] [batch_size] [lr]")
-	print("python minst_pytorch.py --inference-CPU")
-	print("python minst_pytorch.py --pkl2onnx [batch_size]")
+	print("[Pytorch]")
+	print("\t python minst_pytorch.py --training-CPU [epochs] [batch_size] [lr] [continue?]")
+	print("\t python minst_pytorch.py --training-GPU [epochs] [batch_size] [lr] [continue?]")
+	print("\t python minst_pytorch.py --inference-CPU")
+	print("\t python minst_pytorch.py --pkl2onnx [batch_size]")
+	print("==================================================================")
+	print("[OpenVINO] pkl ---> onnx ---> xml,bin ---> Intel IE")
+	print("\t python minst_pytorch.py --model-optimizer ")
+	print("\t python minst_pytorch.py --inferenceOpenVINO_Batch1-CPU")
 	print("==================================================================")
 
 
-
 if __name__ == "__main__":
-	if len(sys.argv) == 5:
+	if len(sys.argv) == 6:
 		epochs = int(sys.argv[2])
 		batch_size = int(sys.argv[3])
 		lr = float(sys.argv[4])
 		if sys.argv[1] == "--training-CPU":
-			TrainingEngine(False).run(epochs,batch_size,lr) # 訓練端
+			TrainingEngine(False).run(epochs,batch_size,lr,int(sys.argv[5])) # 訓練端
 		elif sys.argv[1] == "--training-GPU":
-			TrainingEngine(True).run(epochs,batch_size,lr) # 訓練端
+			TrainingEngine(True).run(epochs,batch_size,lr,int(sys.argv[5])) # 訓練端
 		else:
 			command()
 	elif len(sys.argv) == 2:
 		if sys.argv[1] == "--inference-CPU":
 			InferenceEngine().run() # 推論端
+		elif sys.argv[1] == "--inferenceOpenVINO_Batch1-CPU":
+			InferenceEngineOpenVINO(1).run()
+		elif sys.argv[1] == "--model-optimizer":
+			ModelOptimizerOpenVINO()
 		else:
 			command()
 	elif len(sys.argv) == 3: 
