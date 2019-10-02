@@ -69,7 +69,7 @@ python minst_pytorch.py --inference-CPU
 
 - Windows:
 
-​	<https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_windows.html>
+  https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_windows.html>
 
 - Linux/Mac:
 
