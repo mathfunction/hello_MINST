@@ -4,7 +4,7 @@
 
 ## MINST Data載點:  
 
-http://yann.lecun.com/exdb/mnist/  (已下載至 ./data)
+http://yann.lecun.com/exdb/mnist/  (已經存在至 ./data)
 
 ## 論文連結:   
 
@@ -32,11 +32,11 @@ if __name__ == "__main__":      # 關於命令列功能
 #### Python 需要套件:
 
 -  torch  (需要 1.X.X 版才不會有 bug )
-
 -  idx2numpy  (讀取 .idx1-ubtye, .idx3-ubyte )
-
--  numpy
+-  numpy 
 - matplotlib
+- onnx (深度學習模型通用格式)
+- Intel - openVINO  
 
 #### Pytorch 命令列 : CPU/GPU訓練 , CPU 推論 :
 
@@ -58,7 +58,7 @@ python minst_pytorch.py --inference-CPU
 
 --------------
 
-#### OpenVINO 安裝連結
+#### OpenVINO 安裝教學連結
 
 - Windows:
 
@@ -68,7 +68,7 @@ python minst_pytorch.py --inference-CPU
 
   <https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux.html>
 
-#### OpenVINO 激活環境指令 
+#### OpenVINO 激活環境指令 (使用OpenVINO前，需要下這指令) 
 
 ##### - Windows:
 

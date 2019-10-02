@@ -238,9 +238,9 @@
 			<framework value="onnx"/>
 			<freeze_placeholder_with_value value="{}"/>
 			<generate_experimental_IR_V10 value="False"/>
-			<input_model value="DIR\SimpleCNN_Batch1.onnx"/>
+			<input_model value="DIR/SimpleCNN_Batch1.onnx"/>
 			<input_model_is_text value="False"/>
-			<k value="DIR\CustomLayersMapping.xml"/>
+			<k value="DIR/CustomLayersMapping.xml"/>
 			<keep_quantize_ops_in_IR value="False"/>
 			<keep_shape_ops value="False"/>
 			<legacy_mxnet_model value="False"/>
