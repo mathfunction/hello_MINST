@@ -14,11 +14,14 @@
 import sys
 import os 
 import numpy as np
+import subprocess
+import matplotlib.pyplot as plt
+# pytorch
 import torch
 import torch.nn as nn
 import torch.utils.data as Data
-import matplotlib.pyplot as plt
-import subprocess
+
+
 
 # 取得該檔案絕對路徑
 ABSPATH = os.path.dirname(os.path.abspath(__file__))
