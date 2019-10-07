@@ -31,6 +31,7 @@ ABSPATH = os.path.dirname(os.path.abspath(__file__))
 class ReadMINST:
 	def __init__(self):
 		import idx2numpy
+		# check carefully : from_numpy()  will return torch.tensor( requires_grad=False ) , data is not weights 
 		self.xtrain = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/train-images.idx3-ubyte")).type(torch.FloatTensor)
 		self.ytrain = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/train-labels.idx1-ubyte")).type(torch.LongTensor)
 		self.xtest = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/t10k-images.idx3-ubyte")).type(torch.FloatTensor)

@@ -1,4 +1,4 @@
-# Hello DL / MINST / CNN / Pytorch / OpenVINO / Python Code 
+# Hello DL / MINST / Pytorch + Tensorflow / OpenVINO / Python Code 
 
 #### Python 需要套件:
 
@@ -112,6 +112,12 @@ python minst_pytorch.py --inferenceOpenVINO_Batch1-CPU
 ```
 
 
+
+
+
+
+
+## minst_tensorflow.py: [測試中]
 
 
 
