@@ -1,5 +1,5 @@
 """
-	開發中檔案 : 請不要使用 !! 2019/10/07 : note openVINO + GPU tensorflow 2.0 尚未測試
+	開發中檔案 : openvino 有 bug 請不要使用 !! 
 	
 	This is Tensorflow 2.0 keras MINST run on CPU/GPU code
 
@@ -10,7 +10,18 @@
 		idx2Numpy (格式轉檔)
 		matplotlib (畫樣本)
 	
-	
+	#================================================================================================================#
+	openvino 程式碼更動:
+		1.deployment_tools/model_optimizer/mo/front/tf/partial_infer/tf.py , 147 行 tf.NodeDef 改成 tf.compat.v1.NodeDef
+		2.deployment_tools/model_optimizer/mo/front/tf/loader.py , 
+		
+			tf.NodeDef 改成 tf.compat.v1.NodeDef 
+			tf.GraphDef 改成 tf.compat.v1.GraphDef
+			tf.MetaGraphDef 改成 tf.compat.v1.MetaGraphDef
+		3. deployment_tools/model_optimizer/mo/utils/tensorboard.py	, 26 行
+
+	#================================================================================================================#
+
 
 """
 import sys
@@ -22,6 +33,9 @@ import matplotlib.pyplot as plt
 # tensorflow
 import tensorflow as tf
 from tensorflow import keras
+
+
+
 
 # 取得該檔案絕對路徑
 ABSPATH = os.path.dirname(os.path.abspath(__file__))
@@ -115,10 +129,8 @@ class InferenceEngine:
 		print("___________ Load Tensorflow Model From .pb _____________")
 		#----------------------------------------------------------------------------------
 		self.model.summary()
-		print("Check MINST-TrainData-Accuracy: {} %".format(self.score_func(tf.argmax(self.model(data.xtrain),axis=1),data.ytrain)))
-		#print(tf.argmax(self.model(data.xtrain),axis=1),data.ytrain) 
+		print("Check MINST-TrainData-Accuracy: {} %".format(self.score_func(tf.argmax(self.model(data.xtrain),axis=1),data.ytrain))) 
 		print("Check MINST-TestData-Accuracy: {} %".format(self.score_func(tf.argmax(self.model(data.xtest),axis=1),data.ytest)))
-		#print(tf.argmax(self.model(data.xtest),axis=1),data.ytest)
 	#-----------------------------------------------------
 	# just scan the tf.tensor compute accuracy
 	def score_func(self,y_pred,y_target):
@@ -145,9 +157,9 @@ def ModelOptimizerOpenVINO():
 	# script 指令
 	#============================================================================================================================================
 	try:
-		subprocess.run(["python3","mo.py","--input_model",ABSPATH+"/model/SimpleNN.pb","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
+		subprocess.run(["python3","mo.py","--input_model",ABSPATH+"/model/SimpleNN.pb","--input_model_is_text","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
 	except FileNotFoundError:
-		subprocess.run(["python","mo.py","--input_model",ABSPATH+"/model/SimpleNN.pb","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
+		subprocess.run(["python","mo.py","--input_model",ABSPATH+"/model/SimpleNN.pb","--input_model_is_text","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
 	os.chdir(ABSPATH)
 
 
@@ -161,7 +173,7 @@ def command():
 	print("==================================================================")
 	#print("[OpenVINO] pb  ---> xml,bin ---> Intel IE")
 	#print("\t python minst_pytorch.py --model-optimizer ")
-	#print("==================================================================")
+	print("==================================================================")
 
 if __name__ == "__main__":
 	if len(sys.argv) == 6:
