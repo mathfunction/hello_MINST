@@ -157,9 +157,9 @@ def ModelOptimizerOpenVINO():
 	# script 指令
 	#============================================================================================================================================
 	try:
-		subprocess.run(["python3","mo.py","--input_model",ABSPATH+"/model/SimpleNN.pb","--input_model_is_text","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
+		subprocess.run(["python3","mo.py","--input_model",ABSPATH+"/model/SimpleNN.pb","--input_model_is_text","--batch","1","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
 	except FileNotFoundError:
-		subprocess.run(["python","mo.py","--input_model",ABSPATH+"/model/SimpleNN.pb","--input_model_is_text","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
+		subprocess.run(["python","mo.py","--input_model",ABSPATH+"/model/SimpleNN.pb","--input_model_is_text","--batch","1","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
 	os.chdir(ABSPATH)
 
 

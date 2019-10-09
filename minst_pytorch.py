@@ -29,19 +29,20 @@ ABSPATH = os.path.dirname(os.path.abspath(__file__))
 # 讀檔 class ，特殊檔案 : API 轉成 numpy 轉 torch.tensor : 決定 x,y 的長相
 #=============================================================================================================================================
 class ReadMINST:
-	def __init__(self):
+	def __init__(self,_boolPrint=True):
 		import idx2numpy
 		# check carefully : from_numpy()  will return torch.tensor( requires_grad=False ) , data is not weights 
 		self.xtrain = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/train-images.idx3-ubyte")).type(torch.FloatTensor)
 		self.ytrain = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/train-labels.idx1-ubyte")).type(torch.LongTensor)
 		self.xtest = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/t10k-images.idx3-ubyte")).type(torch.FloatTensor)
 		self.ytest = torch.from_numpy(idx2numpy.convert_from_file(ABSPATH+"/data/t10k-labels.idx1-ubyte")).type(torch.LongTensor)
-		print("-------- 資料形狀 -----------")
-		print("x_train:{}".format(self.xtrain.shape))
-		print("y_train:{}".format(self.ytrain.shape))
-		print("x_test:{}".format(self.xtest.shape))
-		print("y_test:{}".format(self.ytest.shape))
-		print("----------------------------")
+		if _boolPrint == True:
+			print("-------- 資料形狀 -----------")
+			print("x_train:{}".format(self.xtrain.shape))
+			print("y_train:{}".format(self.ytrain.shape))
+			print("x_test:{}".format(self.xtest.shape))
+			print("y_test:{}".format(self.ytest.shape))
+			print("----------------------------")
 	# 把資料印出來看 
 	def look(self,idx=0,_boolTrain=True):
 		if _boolTrain == True:
