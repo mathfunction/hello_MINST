@@ -15,12 +15,11 @@ from minst_pytorch import *
 def pretraining():	
 	TrainingEngine(False).run(nepochs=30,batch_size=100,lr=0.005,_boolContinue=0) # 訓練端
 	InferenceEngine().to_onnx(batch_size=1)
-	ModelOptimizerOpenVINO()
+	
 
 
 
 def performance(_boolOpenVINO=False):
-	
 	
 	data = ReadMINST(False)
 	n_train = data.xtrain.size(0)
@@ -58,4 +57,8 @@ def performance(_boolOpenVINO=False):
 if __name__ == "__main__":
 	#pretraining()
 	performance(_boolOpenVINO=False)
+	ModelOptimizerOpenVINO("FP32")
 	performance(_boolOpenVINO=True)
+	ModelOptimizerOpenVINO("FP16")
+	performance(_boolOpenVINO=True)
+	

@@ -100,7 +100,7 @@ python minst_pytorch.py --pkl2onnx 1
 #### openVINO-ModelOptimizer 可把 SimpleCNN_Batch1.onnx 轉成 .xml , .bin
 
 ```bash
-python minst_pytorch.py --model-optimizer 
+python minst_pytorch.py --model-optimizer [FP32/FP16/half/float]
 ```
 
 

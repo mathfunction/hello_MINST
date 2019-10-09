@@ -304,7 +304,7 @@ class InferenceEngineOpenVINO:
 
 
 
-def ModelOptimizerOpenVINO():
+def ModelOptimizerOpenVINO(data_type="FP32"):
 	if os.name == "nt":
 		os.chdir("C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\model_optimizer")
 	else:
@@ -313,9 +313,9 @@ def ModelOptimizerOpenVINO():
 	# script 指令
 	#============================================================================================================================================
 	try:
-		subprocess.run(["python3","mo.py","--input_model",ABSPATH+"/model/SimpleCNN_Batch1.onnx","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
+		subprocess.run(["python3","mo.py","--input_model",ABSPATH+"/model/SimpleCNN_Batch1.onnx","--output_dir",ABSPATH+"/model/","--data_type",data_type])	
 	except FileNotFoundError:
-		subprocess.run(["python","mo.py","--input_model",ABSPATH+"/model/SimpleCNN_Batch1.onnx","--output_dir",ABSPATH+"/model/","--data_type","FP32"])	
+		subprocess.run(["python","mo.py","--input_model",ABSPATH+"/model/SimpleCNN_Batch1.onnx","--output_dir",ABSPATH+"/model/","--data_type",data_type])	
 	os.chdir(ABSPATH)
 
 
@@ -323,6 +323,7 @@ def ModelOptimizerOpenVINO():
 
 
 def command():
+	
 	print("==================================================================")
 	print("[Pytorch]")
 	print("\t python minst_pytorch.py --training-CPU [epochs] [batch_size] [lr] [continue?]")
@@ -331,10 +332,15 @@ def command():
 	print("\t python minst_pytorch.py --pkl2onnx [batch_size]")
 	print("==================================================================")
 	print("[OpenVINO] pkl ---> onnx ---> xml,bin ---> Intel IE")
-	print("\t python minst_pytorch.py --model-optimizer ")
+	print("\t python minst_pytorch.py --model-optimizer [FP32/FP16/half/float]")
 	print("\t python minst_pytorch.py --inferenceOpenVINO_Batch1-CPU")
-	print("==================================================================")
+	print()
+	print("cmd 啟動指令 : ")
+	print("\t (Windows) \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\bin\\setupvars.bat\"")
+	print("\t (Linux/Mac) source /opt/intel/openvino/bin/setupvars.sh ")
 
+	print("==================================================================")
+	
 
 if __name__ == "__main__":
 	if len(sys.argv) == 6:
@@ -352,13 +358,13 @@ if __name__ == "__main__":
 			InferenceEngine().run() # 推論端
 		elif sys.argv[1] == "--inferenceOpenVINO_Batch1-CPU":
 			InferenceEngineOpenVINO(1).run()
-		elif sys.argv[1] == "--model-optimizer":
-			ModelOptimizerOpenVINO()
 		else:
 			command()
 	elif len(sys.argv) == 3: 
 		if sys.argv[1] == "--pkl2onnx":
 			InferenceEngine().to_onnx(int(sys.argv[2]))
+		elif sys.argv[1] == "--model-optimizer":
+			ModelOptimizerOpenVINO(sys.argv[2])
 		else:
 			command()
 	else:
