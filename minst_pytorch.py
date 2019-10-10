@@ -300,7 +300,31 @@ class InferenceEngineOpenVINO:
 			
 			data.look(r2,False)
 			_str = input("任何鍵重測 , CTRL+C 可終止程式 !!")
+#-------------------------------------------------------------------------------------------------------------------
+# https://www.youtube.com/watch?v=Nmf-aHeRFq4&list=PLDKCjIU5YH6jMzcTV5_cxX9aPHsborbXQ&index=38&fbclid=IwAR02DybVCQ9KiMbnbmgFTxUM3h6oc54Aa6ed5wBJQGTugwcnH8fWBSeoIyM
+#-------------------------------------------------------------------------------------------------------------------
+"""
 
+import cv2 as cv
+class InferenceEngineOpenCV:
+	def __init__(self,batch_size=1):
+		xmlfile = ABSPATH + "/model/SimpleCNN_Batch{}.xml".format(batch_size)
+		binfile = ABSPATH + "/model/SimpleCNN_Batch{}.bin".format(batch_size)
+		self.net = cv.dnn.readNet(xmlfile,binfile)
+		self.net.setPreferableTarget(cv.dnn.DNN_TARGET_CPU)
+		
+	def inferFromFileName(self,imgfile): 
+		# read as grayscale
+		frame = cv.resize(cv.imread(imgfile,cv.IMREAD_GRAYSCALE),(28,28))
+		# blob NCHW
+		blob = cv.dnn.blobFromImage(frame)
+		print("blob_shape={}".format(blob.shape))
+		self.net.setInput(blob)
+		out = self.net.forward()
+		print(out)
+"""
+
+#--------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -334,6 +358,7 @@ def command():
 	print("[OpenVINO] pkl ---> onnx ---> xml,bin ---> Intel IE")
 	print("\t python minst_pytorch.py --model-optimizer [FP32/FP16/half/float]")
 	print("\t python minst_pytorch.py --inferenceOpenVINO_Batch1-CPU")
+	#print("\t python minst_pytorch.py --inferenceOpenCV_Batch1-CPU [imgfile]")
 	print()
 	print("cmd 啟動指令 : ")
 	print("\t (Windows) \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\bin\\setupvars.bat\"")
@@ -365,10 +390,13 @@ if __name__ == "__main__":
 			InferenceEngine().to_onnx(int(sys.argv[2]))
 		elif sys.argv[1] == "--model-optimizer":
 			ModelOptimizerOpenVINO(sys.argv[2])
+		#elif sys.argv[1] == "--inferenceOpenCV_Batch1-CPU":
+			#InferenceEngineOpenCV(1).inferFromFileName(sys.argv[2])
 		else:
 			command()
 	else:
 		command()
+		
 
 	
 	
