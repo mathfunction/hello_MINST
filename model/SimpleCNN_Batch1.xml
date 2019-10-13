@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <net batch="1" name="SimpleCNN_Batch1" version="6">
 	<layers>
-		<layer id="0" name="0" precision="FP32" type="Input">
+		<layer id="0" name="0" precision="FP16" type="Input">
 			<output>
 				<port id="0">
 					<dim>1</dim>
@@ -20,7 +20,7 @@
 				<custom offset="0" size="16"/>
 			</blobs>
 		</layer>
-		<layer id="2" name="22" precision="FP32" type="Reshape">
+		<layer id="2" name="22" precision="FP16" type="Reshape">
 			<input>
 				<port id="0">
 					<dim>1</dim>
@@ -40,7 +40,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="3" name="23" precision="FP32" type="Convolution">
+		<layer id="3" name="23" precision="FP16" type="Convolution">
 			<data dilations="1,1" group="1" kernel="5,5" output="16" pads_begin="2,2" pads_end="2,2" strides="1,1"/>
 			<input>
 				<port id="0">
@@ -59,11 +59,11 @@
 				</port>
 			</output>
 			<blobs>
-				<weights offset="16" size="1600"/>
-				<biases offset="1616" size="64"/>
+				<weights offset="16" size="800"/>
+				<biases offset="816" size="32"/>
 			</blobs>
 		</layer>
-		<layer id="4" name="24" precision="FP32" type="ReLU">
+		<layer id="4" name="24" precision="FP16" type="ReLU">
 			<input>
 				<port id="0">
 					<dim>1</dim>
@@ -81,7 +81,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="5" name="25" precision="FP32" type="Pooling">
+		<layer id="5" name="25" precision="FP16" type="Pooling">
 			<data exclude-pad="true" kernel="2,2" pads_begin="0,0" pads_end="0,0" pool-method="max" rounding_type="floor" strides="2,2"/>
 			<input>
 				<port id="0">
@@ -100,7 +100,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="6" name="26" precision="FP32" type="Convolution">
+		<layer id="6" name="26" precision="FP16" type="Convolution">
 			<data dilations="1,1" group="1" kernel="5,5" output="32" pads_begin="2,2" pads_end="2,2" strides="1,1"/>
 			<input>
 				<port id="0">
@@ -119,11 +119,11 @@
 				</port>
 			</output>
 			<blobs>
-				<weights offset="1680" size="51200"/>
-				<biases offset="52880" size="128"/>
+				<weights offset="848" size="25600"/>
+				<biases offset="26448" size="64"/>
 			</blobs>
 		</layer>
-		<layer id="7" name="27" precision="FP32" type="ReLU">
+		<layer id="7" name="27" precision="FP16" type="ReLU">
 			<input>
 				<port id="0">
 					<dim>1</dim>
@@ -141,7 +141,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="8" name="28" precision="FP32" type="Pooling">
+		<layer id="8" name="28" precision="FP16" type="Pooling">
 			<data exclude-pad="true" kernel="2,2" pads_begin="0,0" pads_end="0,0" pool-method="max" rounding_type="floor" strides="2,2"/>
 			<input>
 				<port id="0">
@@ -167,10 +167,10 @@
 				</port>
 			</output>
 			<blobs>
-				<custom offset="53008" size="8"/>
+				<custom offset="26512" size="8"/>
 			</blobs>
 		</layer>
-		<layer id="10" name="36" precision="FP32" type="Reshape">
+		<layer id="10" name="36" precision="FP16" type="Reshape">
 			<input>
 				<port id="0">
 					<dim>1</dim>
@@ -189,7 +189,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="11" name="37" precision="FP32" type="FullyConnected">
+		<layer id="11" name="37" precision="FP16" type="FullyConnected">
 			<data out-size="10"/>
 			<input>
 				<port id="0">
@@ -204,8 +204,8 @@
 				</port>
 			</output>
 			<blobs>
-				<weights offset="53016" size="62720"/>
-				<biases offset="115736" size="40"/>
+				<weights offset="26520" size="31360"/>
+				<biases offset="57880" size="20"/>
 			</blobs>
 		</layer>
 	</layers>
@@ -227,7 +227,7 @@
 		<cli_parameters>
 			<blobs_as_inputs value="False"/>
 			<caffe_parser_path value="DIR"/>
-			<data_type value="FP32"/>
+			<data_type value="FP16"/>
 			<disable_nhwc_to_nchw value="False"/>
 			<disable_omitting_optional value="False"/>
 			<disable_resnet_optimization value="False"/>
