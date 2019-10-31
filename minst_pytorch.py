@@ -303,7 +303,7 @@ class InferenceEngineOpenVINO:
 #-------------------------------------------------------------------------------------------------------------------
 # https://www.youtube.com/watch?v=Nmf-aHeRFq4&list=PLDKCjIU5YH6jMzcTV5_cxX9aPHsborbXQ&index=38&fbclid=IwAR02DybVCQ9KiMbnbmgFTxUM3h6oc54Aa6ed5wBJQGTugwcnH8fWBSeoIyM
 #-------------------------------------------------------------------------------------------------------------------
-"""
+
 
 import cv2 as cv
 class InferenceEngineOpenCV:
@@ -322,7 +322,7 @@ class InferenceEngineOpenCV:
 		self.net.setInput(blob)
 		out = self.net.forward()
 		print(out)
-"""
+
 
 #--------------------------------------------------------------------------------------------------------------------
 
@@ -390,8 +390,8 @@ if __name__ == "__main__":
 			InferenceEngine().to_onnx(int(sys.argv[2]))
 		elif sys.argv[1] == "--model-optimizer":
 			ModelOptimizerOpenVINO(sys.argv[2])
-		#elif sys.argv[1] == "--inferenceOpenCV_Batch1-CPU":
-			#InferenceEngineOpenCV(1).inferFromFileName(sys.argv[2])
+		elif sys.argv[1] == "--inferenceOpenCV_Batch1-CPU":
+			InferenceEngineOpenCV(1).inferFromFileName(sys.argv[2])
 		else:
 			command()
 	else:
