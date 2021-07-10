@@ -86,6 +86,7 @@ class SimpleCNN(nn.Module):
 			nn.MaxPool2d(2),                # output shape (32, 7, 7)
 		)
 		self.out = nn.Linear(32*7*7, 10)   # fully connected layer, output 10 classes
+
 	# 定義 架構運算先後 !!
 	def forward(self, x):
 		x = x.view(x.size(0),-1,x.size(1),x.size(1))# 因為 conv API 需要 NCHW tensor 
